@@ -37,14 +37,18 @@ defaults
         errorfile 504 /etc/haproxy/errors/504.http
 
 
-frontend sammykingx.tech
+frontend http_front
         bind 0:80
-        bind 0:443 ssl crt /etc/ssl/private/sammykingx.tech.pem
+        bind 0:443 ssl crt /etc/ssl/private/www.webblue.tech-0001.pem
         http-request redirect scheme https code 301 unless { ssl_fc }
         option forwardfor
-        default_backend sammykingx.tech_backend
+        default_backend http_back
 
-backend sammykingx.tech_backend
+backend http_back
         balance roundrobin
         server 64820-web-01 100.26.152.157:80 check
         server 64820-web-02 52.86.102.6:80 check
+
+ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+        ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
