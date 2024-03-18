@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Blocks all ports except for 22, 443 and 80
 ufw allow 22
 ufw allow 443
