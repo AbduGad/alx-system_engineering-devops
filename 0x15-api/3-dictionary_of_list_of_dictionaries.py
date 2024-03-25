@@ -1,37 +1,50 @@
 #!/usr/bin/python3
-"""script for parsing web data from an api
-"""
+"""API usage"""
+import json
+import requests
+import sys
+
+
+def API():
+    """Build a JSON file with id, username, task, and task status"""
+    # Setting URLs
+    baseUrl = "https://jsonplaceholder.typicode.com/"
+    tasksUrl = baseUrl + "todos"
+    emplUrl = baseUrl + "users"
+
+    def emna(a):
+        """Returns the user name from the user URL"""
+        # Setting the URL
+        usersUrl = baseUrl + "users/" + str(a)
+        # Fetches the required data and isolates the name
+        with requests.get(usersUrl) as marko:
+            polo = marko.json()
+            name = polo.get("username")
+            return str(name)
+
+    # Fetchs the number of the users
+    emplNumb = None
+    with requests.get(emplUrl) as marko:
+        polo = marko.json()
+        emplNumb = len(polo)
+    # Getting tasks list
+    with requests.get(tasksUrl) as marko:
+        polo = marko.json()
+        userdic = {}
+        for num in range(1, emplNumb + 1):
+            undone = []
+            for user in polo:
+                if user["userId"] == num:
+                    undone.append({"username": emna(num),
+                                   "task": user.get("title"),
+                                   "completed": user.get("completed")})
+            userdic[num] = undone
+
+    # Writing file
+    fileName = "todo_all_employees.json"
+    with open(fileName, "a") as file:
+        file.write(json.dumps(userdic))
+
+
 if __name__ == "__main__":
-    import json
-    import requests
-    import sys
-    base_url = 'https://jsonplaceholder.typicode.com/'
-
-    # grab info about all users
-    url = base_url + 'users'
-    response = requests.get(url)
-    users = json.loads(response.text)
-
-    # grab the info about the users' tasks
-    builder = {}
-    for user in users:
-        employee_id = user.get('id')
-        user_id_key = str(employee_id)
-        username = user.get('username')
-        builder[user_id_key] = []
-        url = base_url + 'todos?userId={}'.format(employee_id)
-
-        response = requests.get(url)
-        objs = json.loads(response.text)
-        for obj in objs:
-                json_data = {
-                    "task": obj.get('title'),
-                    "completed": obj.get('completed'),
-                    "username": username
-                }
-                builder[user_id_key].append(json_data)
-
-    # write the data to the file
-    json_encoded_data = json.dumps(builder)
-    with open('todo_all_employees.json', 'w') as myFile:
-        myFile.write(json_encoded_data)
+    API()
