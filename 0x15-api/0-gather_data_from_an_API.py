@@ -16,6 +16,7 @@ def API():
         name = polo["name"]
 
     # Getting tasks list
+    # r = requests.get(f'https://jsonplaceholder.typicode.com/todos/?userId={id}')
     with requests.get(tasksUrl) as marko:
         polo = marko.json()
         tasks = 0
